@@ -3,21 +3,21 @@ package database
 import (
 	"database/sql"
 	"fmt"
-	"os"
 
+	"github.com/andreluizmicro/go-driver-api/configs"
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func NewConnection() (*sql.DB, error) {
+func NewConnection(cfg *configs.AppConfig) (*sql.DB, error) {
 	strconn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
+		cfg.DBUser,
+		cfg.DBPassword,
+		cfg.DBHost,
+		cfg.DBPort,
+		cfg.DBName,
 	)
 
-	db, err := sql.Open("mysql", strconn)
+	db, err := sql.Open(cfg.DBDriver, strconn)
 	if err != nil {
 		panic(err)
 	}

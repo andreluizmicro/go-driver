@@ -16,7 +16,7 @@ func NewCreateUser(userRepository contracts.UserRepositoryInterface) *CreateUser
 }
 
 func (u *CreateUser) Execute(input Input) (*Output, error) {
-	user, err := entity.NewUser(input.Name, input.Login, input.Password)
+	user, err := entity.NewUser(input.Name, input.Email, input.Password)
 	if err != nil {
 		return nil, err
 	}

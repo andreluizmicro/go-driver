@@ -43,7 +43,7 @@ func (r *UserRepository) Create(user *entity.User) (*int64, error) {
 }
 
 func (r *UserRepository) FindAll(filters *Filters) ([]entity.User, error) {
-	stmt := fmt.Sprintf("SELECT * FROM users ORDER BY id %s", filters.Order)
+	stmt := fmt.Sprintf("SELECT * FROM users WHERE deleted = 0 ORDER BY id %s", filters.Order)
 
 	rows, err := r.db.Query(stmt)
 	if err != nil {
@@ -80,8 +80,8 @@ func (r *UserRepository) Update(user *entity.User) error {
 	}
 
 	user.ModifiedAt = time.Now()
-	stmt := `UPDATE users SET (name = ?, email = ?, password = ?, modified_at = ? WHERE id = ?)`
-	_, err := r.db.Exec(stmt, user.Name, user.Email, user.Password, user.ModifiedAt, user.ID)
+	stmt := `UPDATE users SET (name = ?, email = ?, modified_at = ? WHERE id = ?)`
+	_, err := r.db.Exec(stmt, user.Name, user.Email, user.ModifiedAt, user.ID)
 	return err
 }
 

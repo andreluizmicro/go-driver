@@ -2,6 +2,6 @@ package user
 
 type Input struct {
 	Name     string `json:"name"`
-	Login    string `json:"login"`
+	Email    string `json:"email"`
 	Password string `json:"password"`
 }
