@@ -3,17 +3,21 @@ package handlers
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	user "github.com/andreluizmicro/go-driver-api/internal/usecase/user/create"
+	"github.com/andreluizmicro/go-driver-api/internal/usecase/user/find"
 )
 
 type UserHandler struct {
-	UseCase *user.CreateUser
+	createUser *user.CreateUser
+	findUser   *find.FindUser
 }
 
-func NewUserHandler(usecase *user.CreateUser) *UserHandler {
+func NewUserHandler(createUser *user.CreateUser, findUser *find.FindUser) *UserHandler {
 	return &UserHandler{
-		usecase,
+		createUser: createUser,
+		findUser:   findUser,
 	}
 }
 
@@ -26,6 +30,18 @@ func (h *UserHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output, err := h.UseCase.Execute(user)
+	output, err := h.createUser.Execute(user)
+	SetResponse(w, err, output)
+}
+
+func (h *UserHandler) FindById(w http.ResponseWriter, r *http.Request) {
+	RequestId := r.PathValue("id")
+	id, err := strconv.Atoi(RequestId)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	output, err := h.findUser.Execute(find.Input{ID: int64(id)})
 	SetResponse(w, err, output)
 }

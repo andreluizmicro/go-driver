@@ -11,6 +11,7 @@ import (
 var (
 	ErrInternalServer    = "Erro interno do servidor"
 	ErrUserAlreadyExists = repository.ErrUserAlreadyExists
+	ErrUserNotFound      = repository.ErrUserNotFound
 )
 
 type ErrorResponse struct {
@@ -27,7 +28,6 @@ func SetResponse(w http.ResponseWriter, err error, bodyResponse any) {
 		checkErrorType(w, err)
 		return
 	}
-
 	setBodyResponse(w, bodyResponse)
 }
 
@@ -38,19 +38,23 @@ func setBodyResponse(w http.ResponseWriter, body any) {
 func checkErrorType(w http.ResponseWriter, err error) {
 	switch err {
 	case ErrUserAlreadyExists:
-		setConflictError(w, err)
+		setError(w, err, http.StatusConflict)
+	case ErrUserNotFound:
+		setError(w, err, http.StatusNotFound)
+	default:
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
 
-func setConflictError(w http.ResponseWriter, err error) {
+func setError(w http.ResponseWriter, err error, status int) {
 	errResponse := ErrorResponse{
 		Message: err.Error(),
 	}
 	errJSON, err := json.Marshal(errResponse)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusConflict)
+		http.Error(w, err.Error(), status)
 		return
 	}
-	w.WriteHeader(http.StatusConflict)
+	w.WriteHeader(status)
 	fmt.Fprintf(w, "%s", string(errJSON))
 }

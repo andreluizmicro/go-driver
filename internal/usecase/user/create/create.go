@@ -1,4 +1,4 @@
-package user
+package create
 
 import (
 	"github.com/andreluizmicro/go-driver-api/internal/domain/contracts"
