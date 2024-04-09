@@ -9,6 +9,7 @@ import (
 	"github.com/andreluizmicro/go-driver-api/internal/infrastructure/web/handlers"
 	user "github.com/andreluizmicro/go-driver-api/internal/usecase/user/create"
 	"github.com/andreluizmicro/go-driver-api/internal/usecase/user/find"
+	"github.com/andreluizmicro/go-driver-api/internal/usecase/user/update"
 	"github.com/andreluizmicro/go-driver-api/pkg/database"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -34,12 +35,14 @@ func main() {
 	userRepository := repository.NewUserRepository(db)
 	createUser := user.NewCreateUser(userRepository)
 	findUser := find.NewFindUser(userRepository)
-	userHandler := handlers.NewUserHandler(createUser, findUser)
+	updateUser := update.NewUpdateUser(userRepository)
+	userHandler := handlers.NewUserHandler(createUser, findUser, updateUser)
 
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("POST /users", userHandler.Create)
 	mux.HandleFunc("GET /users/{id}", userHandler.FindById)
+	mux.HandleFunc("PUT /users/{id}", userHandler.Update)
 
 	http.ListenAndServe(":"+cfg.WebServerPort, mux)
 }

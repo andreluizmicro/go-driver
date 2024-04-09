@@ -1,10 +1,9 @@
-package user
+package update
 
 type Input struct {
-	ID       int64  `json:"id"`
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	ID    int64  `json:"id"`
+	Name  string `json:"name" validate:"required,min=3,max=100"`
+	Email string `json:"email" validate:"omitempty,min=3,max=100"`
 }
 
 type Output struct {

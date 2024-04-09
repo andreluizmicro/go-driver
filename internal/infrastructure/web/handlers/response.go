@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/andreluizmicro/go-driver-api/internal/domain/entity"
 	"github.com/andreluizmicro/go-driver-api/internal/infrastructure/repository"
 )
 
@@ -12,6 +13,7 @@ var (
 	ErrInternalServer    = "Erro interno do servidor"
 	ErrUserAlreadyExists = repository.ErrUserAlreadyExists
 	ErrUserNotFound      = repository.ErrUserNotFound
+	ErrEmailRequired     = entity.ErrEmailRequired
 )
 
 type ErrorResponse struct {
@@ -41,6 +43,8 @@ func checkErrorType(w http.ResponseWriter, err error) {
 		setError(w, err, http.StatusConflict)
 	case ErrUserNotFound:
 		setError(w, err, http.StatusNotFound)
+	case ErrEmailRequired:
+		setError(w, err, http.StatusUnprocessableEntity)
 	default:
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

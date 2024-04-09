@@ -80,7 +80,7 @@ func (r *UserRepository) Update(user *entity.User) error {
 	}
 
 	user.ModifiedAt = time.Now()
-	stmt := `UPDATE users SET (name = ?, email = ?, modified_at = ? WHERE id = ?)`
+	stmt := `UPDATE users SET name = ?, email = ?, modified_at = ? WHERE id = ?`
 	_, err := r.db.Exec(stmt, user.Name, user.Email, user.ModifiedAt, user.ID)
 	return err
 }

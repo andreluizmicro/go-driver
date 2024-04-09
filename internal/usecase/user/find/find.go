@@ -1,8 +1,6 @@
 package find
 
-import (
-	"github.com/andreluizmicro/go-driver-api/internal/domain/contracts"
-)
+import "github.com/andreluizmicro/go-driver-api/internal/domain/contracts"
 
 type FindUser struct {
 	userRepository contracts.UserRepositoryInterface

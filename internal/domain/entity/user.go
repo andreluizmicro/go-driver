@@ -76,13 +76,8 @@ func (u *User) SetPassword(password string) error {
 	return nil
 }
 
-func (u *User) Update(name, email, password string) error {
+func (u *User) Update(name, email string) error {
 	u.Name = strings.ToUpper(name)
 	u.Email = strings.ToLower(email)
-	err := u.SetPassword(password)
-	if err != nil {
-		return err
-	}
-
 	return u.Validate()
 }
