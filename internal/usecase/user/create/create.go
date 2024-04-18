@@ -6,12 +6,12 @@ import (
 )
 
 type CreateUser struct {
-	UserRepository contracts.UserRepositoryInterface
+	userRepository contracts.UserRepositoryInterface
 }
 
 func NewCreateUser(userRepository contracts.UserRepositoryInterface) *CreateUser {
 	return &CreateUser{
-		UserRepository: userRepository,
+		userRepository: userRepository,
 	}
 }
 
@@ -21,7 +21,7 @@ func (u *CreateUser) Execute(input Input) (*Output, error) {
 		return nil, err
 	}
 
-	id, err := u.UserRepository.Create(user)
+	id, err := u.userRepository.Create(user)
 	if err != nil {
 		return nil, err
 	}

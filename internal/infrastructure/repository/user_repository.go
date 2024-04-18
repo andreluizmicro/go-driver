@@ -2,16 +2,11 @@ package repository
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"time"
 
 	"github.com/andreluizmicro/go-driver-api/internal/domain/entity"
-)
-
-var (
-	ErrUserAlreadyExists = errors.New("user alredy exists")
-	ErrUserNotFound      = errors.New("user not found")
+	"github.com/andreluizmicro/go-driver-api/internal/domain/exception"
 )
 
 type UserRepository struct {
@@ -26,7 +21,7 @@ func NewUserRepository(db *sql.DB) *UserRepository {
 
 func (r *UserRepository) Create(user *entity.User) (*int64, error) {
 	if r.ExistsByEmail(user.Email) {
-		return nil, ErrUserAlreadyExists
+		return nil, exception.ErrUserAlreadyExists
 	}
 
 	stmt := `INSERT INTO users (name, email, password, modified_at) VALUES (?, ?, ?, ?)`
@@ -69,14 +64,14 @@ func (r *UserRepository) FindById(id int64) (*entity.User, error) {
 	stmt := `SELECT * FROM users WHERE id = ? AND deleted = ?`
 	err := r.db.QueryRow(stmt, id, 0).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.CreatedAt, &user.ModifiedAt, &user.Deleted, &user.LastLogin)
 	if err != nil {
-		return nil, ErrUserNotFound
+		return nil, exception.ErrUserNotFound
 	}
 	return &user, nil
 }
 
 func (r *UserRepository) Update(user *entity.User) error {
 	if r.ExistsByEmail(user.Email) {
-		return ErrUserAlreadyExists
+		return exception.ErrUserAlreadyExists
 	}
 
 	user.ModifiedAt = time.Now()
@@ -92,7 +87,7 @@ func (r *UserRepository) Delete(id int64) error {
 	}
 
 	if user == nil {
-		return ErrUserNotFound
+		return exception.ErrUserNotFound
 	}
 
 	stmt := `UPDATE users SET deleted = 1 WHERE id = ?`

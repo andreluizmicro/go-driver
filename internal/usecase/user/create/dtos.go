@@ -1,9 +1,9 @@
 package create
 
 type Input struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name     string `form:"name"`
+	Email    string `form:"email"`
+	Password string `form:"password"`
 }
 
 type Output struct {

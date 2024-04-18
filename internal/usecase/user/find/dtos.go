@@ -3,7 +3,7 @@ package find
 import "time"
 
 type Input struct {
-	ID int64 `json:"id"`
+	ID int64 `uri:"id" binding:"required"`
 }
 
 type Output struct {
