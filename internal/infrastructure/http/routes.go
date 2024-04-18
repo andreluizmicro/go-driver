@@ -14,6 +14,7 @@ func InitRoutes(userController *controller.UserController) {
 		users.POST("/", userController.Create)
 		users.GET("/:id", userController.FindById)
 		users.PUT("/:id", userController.Update)
+		users.DELETE("/:id", userController.Delete)
 	}
 
 	err := router.Run(":9000")

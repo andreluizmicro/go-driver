@@ -2,6 +2,7 @@ package entity
 
 import (
 	"crypto/md5"
+	"errors"
 	"fmt"
 	"testing"
 )
@@ -26,13 +27,13 @@ func TestCreateUser(t *testing.T) {
 
 		for _, item := range testCases {
 			user, err := NewUser(item.Name, item.Email, item.Password)
-			if err != nil && err != item.ExpectedError {
+			if err != nil && !errors.Is(err, item.ExpectedError) {
 				t.Errorf("Expected %f but got %f", item.ExpectedError, err)
 			}
 
 			if user != nil {
-				user.Password = fmt.Sprintf("%x", (md5.Sum([]byte(""))))
-				if err = user.Validate(); err != nil && err != ErrPasswordRequired {
+				user.Password = fmt.Sprintf("%x", md5.Sum([]byte("")))
+				if err = user.Validate(); err != nil && !errors.Is(err, ErrPasswordRequired) {
 					t.Errorf("Expected %f but got %f", ErrPasswordRequired, err)
 				}
 			}

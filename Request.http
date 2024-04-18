@@ -3,9 +3,9 @@ POST {{base_url}}/users
 Content-Type: application/json
 
 {
-  "name": "Paulo Braga",
-  "email": "pauloss@gmail.com",
-  "password": "1245sda"
+  "name": "Paulo Braga Antunes",
+  "email": "paulosantunes@gmail.com",
+  "password": "12121321"
 }
 
 ### Listar usuário por Id
@@ -21,3 +21,7 @@ Accept: application/json
   "email": "pauloss@gmail.com",
   "password": "1245sda"
 }
+
+### Deletar usuário
+DELETE {{base_url}}/users/8
+
