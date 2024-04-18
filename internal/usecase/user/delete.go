@@ -8,7 +8,7 @@ type DeleteUser struct {
 	userRepository contracts.UserRepositoryInterface
 }
 
-func NewUserDelete(userRepository contracts.UserRepositoryInterface) *DeleteUser {
+func NewDeleteUser(userRepository contracts.UserRepositoryInterface) *DeleteUser {
 	return &DeleteUser{
 		userRepository: userRepository,
 	}

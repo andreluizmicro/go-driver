@@ -32,7 +32,7 @@ func main() {
 	createUser := user.NewCreateUser(userRepository)
 	findUser := user.NewFindUser(userRepository)
 	updateUser := user.NewUpdateUser(userRepository)
-	deleteUser := user.NewUserDelete(userRepository)
+	deleteUser := user.NewDeleteUser(userRepository)
 
 	userController := controller.NewUserController(createUser, findUser, updateUser, deleteUser)
 
