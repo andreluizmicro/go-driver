@@ -1,20 +1,20 @@
-package update
+package user
 
 import (
 	"github.com/andreluizmicro/go-driver-api/internal/domain/contracts"
 )
 
-type User struct {
+type UpdateUser struct {
 	userRepository contracts.UserRepositoryInterface
 }
 
-func NewUpdateUser(userRepository contracts.UserRepositoryInterface) *User {
-	return &User{
+func NewUpdateUser(userRepository contracts.UserRepositoryInterface) *UpdateUser {
+	return &UpdateUser{
 		userRepository: userRepository,
 	}
 }
 
-func (u *User) Execute(input Input) (*Output, error) {
+func (u *UpdateUser) Execute(input UpdateInput) (*UpdateOutput, error) {
 	user, err := u.userRepository.FindById(input.ID)
 	if err != nil {
 		return nil, err
@@ -28,5 +28,5 @@ func (u *User) Execute(input Input) (*Output, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Output{Success: true}, nil
+	return &UpdateOutput{Success: true}, nil
 }

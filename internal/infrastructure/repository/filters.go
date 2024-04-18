@@ -6,7 +6,7 @@ type Filters struct {
 }
 
 func NewFilters(order string, limit int64) *Filters {
-	if order == "" && order != "ASC" && order != "DESC" {
+	if order == "" {
 		order = "ASC"
 	}
 

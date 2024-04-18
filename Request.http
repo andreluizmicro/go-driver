@@ -9,7 +9,7 @@ Content-Type: application/json
 }
 
 ### Listar usuário por Id
-GET {{base_url}}/users/1
+GET {{base_url}}/users/4
 Accept: application/json
 
 ### Atualizar usuário

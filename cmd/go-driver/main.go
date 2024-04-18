@@ -6,10 +6,7 @@ import (
 	"github.com/andreluizmicro/go-driver-api/internal/infrastructure/http"
 	"github.com/andreluizmicro/go-driver-api/internal/infrastructure/http/controller"
 	"github.com/andreluizmicro/go-driver-api/internal/infrastructure/repository"
-	"github.com/andreluizmicro/go-driver-api/internal/usecase/user/create"
-	delete2 "github.com/andreluizmicro/go-driver-api/internal/usecase/user/delete"
-	"github.com/andreluizmicro/go-driver-api/internal/usecase/user/find"
-	"github.com/andreluizmicro/go-driver-api/internal/usecase/user/update"
+	"github.com/andreluizmicro/go-driver-api/internal/usecase/user"
 	"github.com/andreluizmicro/go-driver-api/pkg/database"
 	_ "github.com/go-sql-driver/mysql"
 )
@@ -32,10 +29,10 @@ func main() {
 	}(db)
 
 	userRepository := repository.NewUserRepository(db)
-	createUser := create.NewCreateUser(userRepository)
-	findUser := find.NewFindUser(userRepository)
-	updateUser := update.NewUpdateUser(userRepository)
-	deleteUser := delete2.NewUserDelete(userRepository)
+	createUser := user.NewCreateUser(userRepository)
+	findUser := user.NewFindUser(userRepository)
+	updateUser := user.NewUpdateUser(userRepository)
+	deleteUser := user.NewUserDelete(userRepository)
 
 	userController := controller.NewUserController(createUser, findUser, updateUser, deleteUser)
 

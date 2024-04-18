@@ -2,28 +2,28 @@ package controller
 
 import (
 	"errors"
+	"github.com/andreluizmicro/go-driver-api/internal/usecase/user"
 	deleteUseCase "github.com/andreluizmicro/go-driver-api/internal/usecase/user/delete"
 	"github.com/andreluizmicro/go-driver-api/internal/usecase/user/update"
 	"net/http"
 
 	"github.com/andreluizmicro/go-driver-api/internal/domain/exception"
-	"github.com/andreluizmicro/go-driver-api/internal/usecase/user/create"
 	"github.com/andreluizmicro/go-driver-api/internal/usecase/user/find"
 	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
-	createUseCase *create.User
-	findUseCase   *find.User
-	updateUseCase *update.User
-	deleteUseCase *deleteUseCase.User
+	createUseCase *user.User
+	findUseCase   *user.User
+	updateUseCase *user.User
+	deleteUseCase *user.User
 }
 
 func NewUserController(
-	createUseCase *create.User,
-	findUseCase *find.User,
-	updateUseCase *update.User,
-	deleteUseCase *deleteUseCase.User,
+	createUseCase *user.User,
+	findUseCase *user.User,
+	updateUseCase *user.User,
+	deleteUseCase *user.User,
 ) *UserController {
 	return &UserController{
 		createUseCase: createUseCase,
@@ -34,7 +34,7 @@ func NewUserController(
 }
 
 func (us *UserController) Create(c *gin.Context) {
-	var input create.Input
+	var input user.CreateInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"msg": err.Error()})
 		return
