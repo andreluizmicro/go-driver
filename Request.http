@@ -1,0 +1,23 @@
+### Criar novo usuário
+POST {{base_url}}/users
+Content-Type: application/json
+
+{
+  "name": "Paulo Braga",
+  "email": "pauloss@gmail.com",
+  "password": "1245sda"
+}
+
+### Listar usuário por Id
+GET {{base_url}}/users/1
+Accept: application/json
+
+### Atualizar usuário
+PUT {{base_url}}/users/8
+Accept: application/json
+
+{
+  "name": "Paulo Braga",
+  "email": "pauloss@gmail.com",
+  "password": "1245sda"
+}

@@ -3,10 +3,9 @@ package repository
 import (
 	"database/sql"
 	"fmt"
-	"time"
-
 	"github.com/andreluizmicro/go-driver-api/internal/domain/entity"
 	"github.com/andreluizmicro/go-driver-api/internal/domain/exception"
+	"time"
 )
 
 type UserRepository struct {
@@ -24,8 +23,8 @@ func (r *UserRepository) Create(user *entity.User) (*int64, error) {
 		return nil, exception.ErrUserAlreadyExists
 	}
 
-	stmt := `INSERT INTO users (name, email, password, modified_at) VALUES (?, ?, ?, ?)`
-	result, err := r.db.Exec(stmt, user.Name, user.Email, user.Password, user.ModifiedAt)
+	stmt := `INSERT INTO users (name, email, password) VALUES (?, ?, ?)`
+	result, err := r.db.Exec(stmt, user.Name, user.Email, user.Password)
 	if err != nil {
 		return nil, err
 	}
@@ -44,13 +43,27 @@ func (r *UserRepository) FindAll(filters *Filters) ([]entity.User, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer rows.Close()
+	defer func(rows *sql.Rows) {
+		err := rows.Close()
+		if err != nil {
+
+		}
+	}(rows)
 
 	var users []entity.User
 
 	for rows.Next() {
 		var user entity.User
-		err = rows.Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.CreatedAt, &user.ModifiedAt, &user.Deleted, &user.LastLogin)
+		err = rows.Scan(
+			&user.ID,
+			&user.Name,
+			&user.Email,
+			&user.Password,
+			&user.CreatedAt,
+			&user.ModifiedAt,
+			&user.Deleted,
+			&user.LastLogin,
+		)
 		if err != nil {
 			return nil, err
 		}
@@ -62,7 +75,16 @@ func (r *UserRepository) FindAll(filters *Filters) ([]entity.User, error) {
 func (r *UserRepository) FindById(id int64) (*entity.User, error) {
 	var user entity.User
 	stmt := `SELECT * FROM users WHERE id = ? AND deleted = ?`
-	err := r.db.QueryRow(stmt, id, 0).Scan(&user.ID, &user.Name, &user.Email, &user.Password, &user.CreatedAt, &user.ModifiedAt, &user.Deleted, &user.LastLogin)
+	err := r.db.QueryRow(stmt, id, 0).Scan(
+		&user.ID,
+		&user.Name,
+		&user.Email,
+		&user.Password,
+		&user.CreatedAt,
+		&user.ModifiedAt,
+		&user.Deleted,
+		&user.LastLogin,
+	)
 	if err != nil {
 		return nil, exception.ErrUserNotFound
 	}
@@ -74,9 +96,8 @@ func (r *UserRepository) Update(user *entity.User) error {
 		return exception.ErrUserAlreadyExists
 	}
 
-	user.ModifiedAt = time.Now()
 	stmt := `UPDATE users SET name = ?, email = ?, modified_at = ? WHERE id = ?`
-	_, err := r.db.Exec(stmt, user.Name, user.Email, user.ModifiedAt, user.ID)
+	_, err := r.db.Exec(stmt, user.Name, user.Email, time.Now(), user.ID)
 	return err
 }
 
@@ -98,6 +119,9 @@ func (r *UserRepository) Delete(id int64) error {
 func (r *UserRepository) ExistsByEmail(email string) bool {
 	var id *int64
 	stmt := `SELECT id FROM users WHERE email = ?`
-	r.db.QueryRow(stmt, email).Scan(&id)
+	err := r.db.QueryRow(stmt, email).Scan(&id)
+	if err != nil {
+		return false
+	}
 	return id != nil
 }

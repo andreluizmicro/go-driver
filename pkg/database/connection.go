@@ -9,7 +9,7 @@ import (
 )
 
 func NewConnection(cfg *configs.AppConfig) (*sql.DB, error) {
-	strconn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+	strConnection := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
 		cfg.DBUser,
 		cfg.DBPassword,
 		cfg.DBHost,
@@ -17,7 +17,7 @@ func NewConnection(cfg *configs.AppConfig) (*sql.DB, error) {
 		cfg.DBName,
 	)
 
-	db, err := sql.Open(cfg.DBDriver, strconn)
+	db, err := sql.Open(cfg.DBDriver, strConnection)
 	if err != nil {
 		panic(err)
 	}

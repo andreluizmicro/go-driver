@@ -2,7 +2,10 @@ module github.com/andreluizmicro/go-driver-api
 
 go 1.22.1
 
-require github.com/go-sql-driver/mysql v1.8.1
+require (
+	github.com/go-sql-driver/mysql v1.8.1
+	golang.org/x/crypto v0.19.0
+)
 
 require (
 	github.com/bytedance/sonic v1.9.1 // indirect
@@ -32,10 +35,8 @@ require (
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
-	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.19.0 // indirect
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
@@ -49,7 +50,6 @@ require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.19.0
-	github.com/joeshaw/envdecode v0.0.0-20200121155833-099f1fc765bd
 	github.com/spf13/viper v1.18.2
-	go.uber.org/zap v1.27.0
+	gorm.io/gorm v1.25.9
 )

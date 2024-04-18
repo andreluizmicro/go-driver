@@ -11,5 +11,8 @@ RUN apt-get update && \
     go install github.com/golang/mock/mockgen@v1.6.0 && \
     go install github.com/cosmtrek/air@latest && \
     go mod download
-    
+
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 ENTRYPOINT ["air", "-d"]

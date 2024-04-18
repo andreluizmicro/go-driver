@@ -1,9 +1,9 @@
 package update
 
 type Input struct {
-	ID    int64  `json:"id"`
-	Name  string `json:"name" validate:"required,min=3,max=100"`
-	Email string `json:"email" validate:"omitempty,min=3,max=100"`
+	ID    int64  `uri:"id" binding:"required"`
+	Name  string `form:"name"`
+	Email string `form:"email" binding:"omitempty,required,min=5"`
 }
 
 type Output struct {

@@ -1,18 +1,18 @@
 package entity
 
 import (
-	"crypto/md5"
 	"errors"
-	"fmt"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
 	ErrNameRequired     = errors.New("name is required")
 	ErrEmailRequired    = errors.New("email is required")
-	ErrPasswordRequired = errors.New("password is required and cant't be blank")
-	ErrPasswordLen      = errors.New("password must have at least caracters")
+	ErrPasswordRequired = errors.New("password is required and can't be blank")
+	ErrPasswordLen      = errors.New("password must have at least characters")
 )
 
 type User struct {
@@ -27,10 +27,10 @@ type User struct {
 }
 
 func NewUser(name, email, password string) (*User, error) {
+
 	user := User{
-		Name:       strings.ToUpper(name),
-		Email:      strings.ToLower(email),
-		ModifiedAt: time.Now(),
+		Name:  strings.ToUpper(name),
+		Email: strings.ToLower(email),
 	}
 
 	err := user.SetPassword(password)
@@ -55,7 +55,11 @@ func (u *User) Validate() error {
 		return ErrEmailRequired
 	}
 
-	blankPassword := fmt.Sprintf("%x", (md5.Sum([]byte(""))))
+	hash, err := bcrypt.GenerateFromPassword([]byte(""), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	blankPassword := string(hash)
 
 	if u.Password == blankPassword {
 		return ErrPasswordRequired
@@ -68,12 +72,22 @@ func (u *User) SetPassword(password string) error {
 		return ErrPasswordRequired
 	}
 
-	if len(password) < 6 {
+	if len(password) < 8 {
 		return ErrPasswordLen
 	}
 
-	u.Password = fmt.Sprintf("%x", (md5.Sum([]byte(password))))
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	u.Password = string(hash)
 	return nil
+}
+
+func (u *User) ValidatePassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	return err == nil
 }
 
 func (u *User) Update(name, email string) error {

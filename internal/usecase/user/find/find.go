@@ -2,17 +2,17 @@ package find
 
 import "github.com/andreluizmicro/go-driver-api/internal/domain/contracts"
 
-type FindUser struct {
+type User struct {
 	userRepository contracts.UserRepositoryInterface
 }
 
-func NewFindUser(userRepository contracts.UserRepositoryInterface) *FindUser {
-	return &FindUser{
+func NewFindUser(userRepository contracts.UserRepositoryInterface) *User {
+	return &User{
 		userRepository: userRepository,
 	}
 }
 
-func (u *FindUser) Execute(input Input) (*Output, error) {
+func (u *User) Execute(input Input) (*Output, error) {
 	user, err := u.userRepository.FindById(input.ID)
 	if err != nil {
 		return nil, err
