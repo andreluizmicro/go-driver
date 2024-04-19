@@ -2,6 +2,7 @@ package entity
 
 import (
 	"errors"
+	"github.com/andreluizmicro/go-driver-api/internal/domain/exception"
 	"strings"
 	"time"
 
@@ -11,7 +12,6 @@ import (
 const PasswordMinLength = 8
 
 var (
-	ErrNameRequired     = errors.New("name is required")
 	ErrEmailRequired    = errors.New("email is required")
 	ErrPasswordRequired = errors.New("password is required and can't be blank")
 	ErrPasswordLen      = errors.New("password must have at least characters")
@@ -50,7 +50,7 @@ func NewUser(name, email, password string) (*User, error) {
 
 func (u *User) Validate() error {
 	if u.Name == "" {
-		return ErrNameRequired
+		return exception.ErrNameRequired
 	}
 
 	if u.Email == "" {

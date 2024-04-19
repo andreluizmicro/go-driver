@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"errors"
 	"fmt"
+	"github.com/andreluizmicro/go-driver-api/internal/domain/exception"
 	"testing"
 )
 
@@ -17,7 +18,7 @@ func TestCreateUser(t *testing.T) {
 
 	t.Run("test create user", func(t *testing.T) {
 		testCases := []testcase{
-			{Name: "", Email: "batman", Password: "123456789", ExpectedError: ErrNameRequired},
+			{Name: "", Email: "batman", Password: "123456789", ExpectedError: exception.ErrNameRequired},
 			{Name: "Batman da Silva", Email: "batman", Password: "12345678", ExpectedError: nil},
 			{Name: "Super Man da Silva", Email: "batman", Password: "", ExpectedError: ErrPasswordRequired},
 			{Name: "Hulk Da Silva", Email: "", Password: "123456789", ExpectedError: ErrEmailRequired},
