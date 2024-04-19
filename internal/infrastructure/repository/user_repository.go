@@ -74,15 +74,13 @@ func (r *UserRepository) FindAll(filters *filter.Filters) (contracts.PaginateInt
 		users = append(users, &user)
 	}
 
-	totalItems := "SELECT COUNT(*) FROM users"
-	var total int
-	err = r.db.QueryRow(totalItems).Scan(&total)
+	total, err := r.GetTotal()
 	if err != nil {
 		return &Presenter.PaginatePresenter{}, err
 	}
 
-	totalPages := int64(total) / filters.PerPage
-	if int64(total)%filters.PerPage != 0 {
+	totalPages := total / filters.PerPage
+	if total%filters.PerPage != 0 {
 		totalPages++
 	}
 
@@ -150,6 +148,16 @@ func (r *UserRepository) ExistsByEmail(email string) bool {
 	return id != nil
 }
 
+func (r *UserRepository) GetTotal() (int64, error) {
+	totalItems := "SELECT COUNT(*) FROM users"
+	var total int
+	err := r.db.QueryRow(totalItems).Scan(&total)
+	if err != nil {
+		return 0, err
+	}
+	return int64(total), nil
+}
+
 func applyFilters(filters *filter.Filters) string {
 	query := "SELECT"
 
@@ -167,7 +175,11 @@ func applyFilters(filters *filter.Filters) string {
 		}
 	}
 
-	query += " FROM users"
+	query += " FROM users WHERE deleted = 0"
+
+	if filters.Order != "" {
+		query += fmt.Sprintf(" ORDER BY %s ASC", filters.Order)
+	}
 
 	query += fmt.Sprintf(" LIMIT %d OFFSET %d", filters.PerPage, (filters.Page-1)*filters.PerPage)
 
