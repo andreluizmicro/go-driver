@@ -1,7 +1,9 @@
 package user
 
 import (
+	"errors"
 	"github.com/andreluizmicro/go-driver-api/internal/domain/contracts"
+	"github.com/andreluizmicro/go-driver-api/internal/domain/exception"
 )
 
 type DeleteUser struct {
@@ -16,5 +18,13 @@ func NewDeleteUser(userRepository contracts.UserRepositoryInterface) *DeleteUser
 
 func (us *DeleteUser) Execute(input DeleteInput) DeleteOutput {
 	err := us.userRepository.Delete(input.ID)
-	return DeleteOutput{Success: err == nil}
+	if err != nil && errors.Is(err, exception.ErrUserNotFound) {
+		return DeleteOutput{
+			Err: err,
+		}
+	}
+
+	return DeleteOutput{
+		Err: nil,
+	}
 }

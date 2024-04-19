@@ -11,6 +11,7 @@ func InitRoutes(userController *controller.UserController) {
 	v1 := router.Group("/v1")
 	{
 		users := v1.Group("/users")
+		users.GET("/", userController.FindAll)
 		users.POST("/", userController.Create)
 		users.GET("/:id", userController.FindById)
 		users.PUT("/:id", userController.Update)

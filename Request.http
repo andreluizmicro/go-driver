@@ -4,24 +4,23 @@ Content-Type: application/json
 
 {
   "name": "Paulo Braga Antunes",
-  "email": "paulosantunes@gmail.com",
-  "password": "12121321"
+  "email": "ydusyuadia@gmail.com",
+  "password": "asd7897d$$$455"
 }
 
 ### Listar usuário por Id
-GET {{base_url}}/users/4
+GET {{base_url}}/users/1
 Accept: application/json
 
 ### Atualizar usuário
-PUT {{base_url}}/users/8
+PUT {{base_url}}/users/7
 Accept: application/json
 
 {
-  "name": "Paulo Braga",
+
   "email": "pauloss@gmail.com",
   "password": "1245sda"
 }
 
 ### Deletar usuário
-DELETE {{base_url}}/users/8
-
+DELETE {{base_url}}/users/9

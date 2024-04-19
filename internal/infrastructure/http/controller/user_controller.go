@@ -10,6 +10,7 @@ import (
 )
 
 type UserController struct {
+	listUser   *user.ListUser
 	createUser *user.CreateUser
 	findUser   *user.FindUser
 	updateUser *user.UpdateUser
@@ -17,12 +18,14 @@ type UserController struct {
 }
 
 func NewUserController(
+	listUser *user.ListUser,
 	createUser *user.CreateUser,
 	findUser *user.FindUser,
 	updateUser *user.UpdateUser,
 	deleteUser *user.DeleteUser,
 ) *UserController {
 	return &UserController{
+		listUser:   listUser,
 		createUser: createUser,
 		findUser:   findUser,
 		updateUser: updateUser,
@@ -68,6 +71,22 @@ func (us *UserController) FindById(c *gin.Context) {
 	c.JSON(http.StatusOK, &output)
 }
 
+func (us *UserController) FindAll(c *gin.Context) {
+	var input user.ListInput
+	if err := c.ShouldBindUri(&input); err != nil {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"msg": err.Error()})
+		return
+	}
+
+	output, err := us.listUser.Execute(input)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, &output)
+}
+
 func (us *UserController) Update(c *gin.Context) {
 	var input user.UpdateInput
 
@@ -99,8 +118,13 @@ func (us *UserController) Delete(c *gin.Context) {
 	}
 
 	output := us.deleteUser.Execute(input)
-	if !output.Success {
+	if errors.Is(output.Err, exception.ErrUserNotFound) {
+		c.JSON(http.StatusNotFound, gin.H{"message": output.Err.Error()})
+		return
+	}
+	if output.Err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "Error when try delete user"})
+		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "User deleted"})
 }

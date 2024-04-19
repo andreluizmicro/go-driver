@@ -2,9 +2,11 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
+	"github.com/andreluizmicro/go-driver-api/internal/domain/contracts"
 	"github.com/andreluizmicro/go-driver-api/internal/domain/entity"
 	"github.com/andreluizmicro/go-driver-api/internal/domain/exception"
+	"github.com/andreluizmicro/go-driver-api/internal/infrastructure/Presenter"
+	"github.com/andreluizmicro/go-driver-api/internal/infrastructure/repository/filter"
 	"time"
 )
 
@@ -36,21 +38,20 @@ func (r *UserRepository) Create(user *entity.User) (*int64, error) {
 	return &id, nil
 }
 
-func (r *UserRepository) FindAll(filters *Filters) ([]entity.User, error) {
-	stmt := fmt.Sprintf("SELECT * FROM users WHERE deleted = 0 ORDER BY id %s", filters.Order)
+func (r *UserRepository) FindAll(filters *filter.Filters) (contracts.PaginateInterface, error) {
+	stmt := "SELECT * FROM users WHERE deleted = 0 ORDER BY name LIMIT ?, ?"
 
-	rows, err := r.db.Query(stmt)
+	rows, err := r.db.Query(stmt, filters.PerPage, (filters.Page-1)*filters.PerPage)
 	if err != nil {
-		return nil, err
+		return &Presenter.PaginatePresenter{}, err
 	}
 	defer func(rows *sql.Rows) {
 		err := rows.Close()
 		if err != nil {
-
 		}
 	}(rows)
 
-	var users []entity.User
+	var users []interface{}
 
 	for rows.Next() {
 		var user entity.User
@@ -67,9 +68,12 @@ func (r *UserRepository) FindAll(filters *Filters) ([]entity.User, error) {
 		if err != nil {
 			return nil, err
 		}
-		users = append(users, user)
+		users = append(users, &user)
 	}
-	return users, nil
+
+	return &Presenter.PaginatePresenter{
+		Data: users,
+	}, nil
 }
 
 func (r *UserRepository) FindById(id int64) (*entity.User, error) {

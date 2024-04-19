@@ -33,8 +33,9 @@ func main() {
 	findUser := user.NewFindUser(userRepository)
 	updateUser := user.NewUpdateUser(userRepository)
 	deleteUser := user.NewDeleteUser(userRepository)
+	listUser := user.NewListUser(userRepository)
 
-	userController := controller.NewUserController(createUser, findUser, updateUser, deleteUser)
+	userController := controller.NewUserController(listUser, createUser, findUser, updateUser, deleteUser)
 
 	http.InitRoutes(userController)
 }

@@ -6,9 +6,9 @@ import (
 )
 
 type CreateInput struct {
-	Name     string `form:"name"`
+	Name     string `form:"name" binding:"required,min=3,max=100"`
 	Email    string `form:"email" binding:"required,min=5"`
-	Password string `form:"password"`
+	Password string `form:"password" binding:"required,min=8"`
 }
 
 type CreateOutput struct {
@@ -29,10 +29,29 @@ type FindOutput struct {
 	LastLogin  time.Time `json:"last_login"`
 }
 
+type ListInput struct {
+	Page    int64                  `uri:"page"`
+	PerPage int64                  `uri:"per_page"`
+	Filters map[string]interface{} `uri:"filter[]"`
+	Order   string                 `uri:"order"`
+}
+
+type ListOutput struct {
+	Data        []any `json:"data"`
+	Total       int64 `json:"total"`
+	Page        int64 `json:"page"`
+	FirstPage   int64 `json:"first_page"`
+	LastPage    int64 `json:"last_page"`
+	CurrentPage int64 `json:"current_page"`
+	To          int64 `json:"to"`
+	From        int64 `json:"from"`
+}
+
 type UpdateInput struct {
-	ID    int64  `uri:"id" binding:"required"`
-	Name  string `form:"name"`
-	Email string `form:"email" binding:"omitempty,required,min=5"`
+	ID       int64  `uri:"id" binding:"required"`
+	Name     string `form:"name" binding:"required,min=5"`
+	Email    string `form:"email" binding:"required,min=5"`
+	Password string `form:"password" binding:"required,min=8"`
 }
 
 type UpdateOutput struct {
@@ -44,5 +63,5 @@ type DeleteInput struct {
 }
 
 type DeleteOutput struct {
-	Success bool `json:"success"`
+	Err error
 }
