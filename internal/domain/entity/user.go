@@ -8,6 +8,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+const PasswordMinLength = 8
+
 var (
 	ErrNameRequired     = errors.New("name is required")
 	ErrEmailRequired    = errors.New("email is required")
@@ -72,7 +74,7 @@ func (u *User) SetPassword(password string) error {
 		return ErrPasswordRequired
 	}
 
-	if len(password) < 8 {
+	if len(password) < PasswordMinLength {
 		return ErrPasswordLen
 	}
 

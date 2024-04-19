@@ -171,7 +171,7 @@ func applyFields(filters *filter.Filters) string {
 	if filters.Fields != nil {
 		for key, field := range filters.Fields {
 			if len(filters.Fields)-1 == key {
-				fields += fmt.Sprintf(" %s", field)
+				fields = fmt.Sprintf(" %s", field)
 				continue
 			}
 			fields += fmt.Sprintf(" %s,", field)
