@@ -40,11 +40,18 @@ func (r *UserRepository) Create(user *entity.User) (*int64, error) {
 }
 
 func (r *UserRepository) FindAll(filters *filter.Filters) (contracts.PaginateInterface, error) {
-	query := applyFilters(filters)
+	order := "id"
 
-	stmt := query
+	if filters.Order != "" {
+		order = filters.Order
+	}
 
-	rows, err := r.db.Query(stmt)
+	query := fmt.Sprintf(
+		"SELECT %s FROM users WHERE deleted = 0 ORDER BY %s ASC LIMIT %d OFFSET %d",
+		applyFields(filters), order, filters.PerPage, (filters.Page-1)*filters.PerPage,
+	)
+
+	rows, err := r.db.Query(query)
 	if err != nil {
 		return &Presenter.PaginatePresenter{}, err
 	}
@@ -149,7 +156,7 @@ func (r *UserRepository) ExistsByEmail(email string) bool {
 }
 
 func (r *UserRepository) GetTotal() (int64, error) {
-	totalItems := "SELECT COUNT(*) FROM users"
+	totalItems := "SELECT COUNT(*) FROM users WHERE deleted = 0"
 	var total int
 	err := r.db.QueryRow(totalItems).Scan(&total)
 	if err != nil {
@@ -158,30 +165,17 @@ func (r *UserRepository) GetTotal() (int64, error) {
 	return int64(total), nil
 }
 
-func applyFilters(filters *filter.Filters) string {
-	query := "SELECT"
-
-	if filters.Fields == nil {
-		query += " * "
-	}
+func applyFields(filters *filter.Filters) string {
+	fields := "*"
 
 	if filters.Fields != nil {
 		for key, field := range filters.Fields {
 			if len(filters.Fields)-1 == key {
-				query += fmt.Sprintf(" %s", field)
+				fields += fmt.Sprintf(" %s", field)
 				continue
 			}
-			query += fmt.Sprintf(" %s,", field)
+			fields += fmt.Sprintf(" %s,", field)
 		}
 	}
-
-	query += " FROM users WHERE deleted = 0"
-
-	if filters.Order != "" {
-		query += fmt.Sprintf(" ORDER BY %s ASC", filters.Order)
-	}
-
-	query += fmt.Sprintf(" LIMIT %d OFFSET %d", filters.PerPage, (filters.Page-1)*filters.PerPage)
-
-	return query
+	return fields
 }
