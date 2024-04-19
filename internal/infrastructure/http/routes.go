@@ -18,7 +18,7 @@ func InitRoutes(userController *controller.UserController) {
 		users.DELETE("/:id", userController.Delete)
 	}
 
-	err := router.Run(":9000")
+	err := router.Run(":9001")
 	if err != nil {
 		return
 	}

@@ -30,21 +30,20 @@ type FindOutput struct {
 }
 
 type ListInput struct {
-	Page    int64                  `uri:"page"`
-	PerPage int64                  `uri:"per_page"`
-	Filters map[string]interface{} `uri:"filter[]"`
-	Order   string                 `uri:"order"`
+	Page    int64    `form:"page"`
+	PerPage int64    `form:"per_page"`
+	Fields  []string `form:"fields[]"`
+	Order   string   `form:"order"`
+	Email   string   `form:"email"`
 }
 
 type ListOutput struct {
 	Data        []any `json:"data"`
 	Total       int64 `json:"total"`
-	Page        int64 `json:"page"`
+	CurrentPage int64 `json:"current_page"`
+	TotalPage   int64 `json:"total_page"`
 	FirstPage   int64 `json:"first_page"`
 	LastPage    int64 `json:"last_page"`
-	CurrentPage int64 `json:"current_page"`
-	To          int64 `json:"to"`
-	From        int64 `json:"from"`
 }
 
 type UpdateInput struct {

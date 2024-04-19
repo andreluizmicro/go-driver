@@ -73,7 +73,7 @@ func (us *UserController) FindById(c *gin.Context) {
 
 func (us *UserController) FindAll(c *gin.Context) {
 	var input user.ListInput
-	if err := c.ShouldBindUri(&input); err != nil {
+	if err := c.ShouldBindQuery(&input); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"msg": err.Error()})
 		return
 	}

@@ -19,8 +19,9 @@ func (u *ListUser) Execute(input ListInput) (*ListOutput, error) {
 	filters := filter.NewFilters(
 		input.Page,
 		input.PerPage,
-		input.Filters,
+		input.Fields,
 		input.Order,
+		input.Email,
 	)
 
 	pagination, err := u.userRepository.FindAll(filters)
@@ -29,7 +30,11 @@ func (u *ListUser) Execute(input ListInput) (*ListOutput, error) {
 	}
 
 	return &ListOutput{
-		Data:  pagination.Items(),
-		Total: pagination.Total(),
+		Data:        pagination.GetItems(),
+		Total:       pagination.GetTotal(),
+		CurrentPage: pagination.GetCurrentPage(),
+		TotalPage:   pagination.GetTotalPage(),
+		FirstPage:   pagination.GetFirstPage(),
+		LastPage:    pagination.GetLastPage(),
 	}, nil
 }

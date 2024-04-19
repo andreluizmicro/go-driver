@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"github.com/andreluizmicro/go-driver-api/internal/domain/contracts"
 	"github.com/andreluizmicro/go-driver-api/internal/domain/entity"
 	"github.com/andreluizmicro/go-driver-api/internal/domain/exception"
@@ -39,9 +40,11 @@ func (r *UserRepository) Create(user *entity.User) (*int64, error) {
 }
 
 func (r *UserRepository) FindAll(filters *filter.Filters) (contracts.PaginateInterface, error) {
-	stmt := "SELECT * FROM users WHERE deleted = 0 ORDER BY name LIMIT ?, ?"
+	query := applyFilters(filters)
 
-	rows, err := r.db.Query(stmt, filters.PerPage, (filters.Page-1)*filters.PerPage)
+	stmt := query
+
+	rows, err := r.db.Query(stmt)
 	if err != nil {
 		return &Presenter.PaginatePresenter{}, err
 	}
@@ -71,8 +74,25 @@ func (r *UserRepository) FindAll(filters *filter.Filters) (contracts.PaginateInt
 		users = append(users, &user)
 	}
 
+	totalItems := "SELECT COUNT(*) FROM users"
+	var total int
+	err = r.db.QueryRow(totalItems).Scan(&total)
+	if err != nil {
+		return &Presenter.PaginatePresenter{}, err
+	}
+
+	totalPages := int64(total) / filters.PerPage
+	if int64(total)%filters.PerPage != 0 {
+		totalPages++
+	}
+
 	return &Presenter.PaginatePresenter{
-		Data: users,
+		Data:        users,
+		Total:       int64(total),
+		CurrentPage: filters.Page,
+		TotalPage:   totalPages,
+		FirstPage:   1,
+		LastPage:    totalPages,
 	}, nil
 }
 
@@ -128,4 +148,28 @@ func (r *UserRepository) ExistsByEmail(email string) bool {
 		return false
 	}
 	return id != nil
+}
+
+func applyFilters(filters *filter.Filters) string {
+	query := "SELECT"
+
+	if filters.Fields == nil {
+		query += " * "
+	}
+
+	if filters.Fields != nil {
+		for key, field := range filters.Fields {
+			if len(filters.Fields)-1 == key {
+				query += fmt.Sprintf(" %s", field)
+				continue
+			}
+			query += fmt.Sprintf(" %s,", field)
+		}
+	}
+
+	query += " FROM users"
+
+	query += fmt.Sprintf(" LIMIT %d OFFSET %d", filters.PerPage, (filters.Page-1)*filters.PerPage)
+
+	return query
 }
