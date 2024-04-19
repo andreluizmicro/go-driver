@@ -1,11 +1,16 @@
 package http
 
 import (
+	"fmt"
 	"github.com/andreluizmicro/go-driver-api/internal/infrastructure/http/controller"
 	"github.com/gin-gonic/gin"
 )
 
-func InitRoutes(userController *controller.UserController) {
+func InitRoutes(
+	userController *controller.UserController,
+	folderController *controller.FolderController,
+	port string,
+) {
 	router := gin.Default()
 
 	v1 := router.Group("/v1")
@@ -16,9 +21,13 @@ func InitRoutes(userController *controller.UserController) {
 		users.GET("/:id", userController.FindById)
 		users.PUT("/:id", userController.Update)
 		users.DELETE("/:id", userController.Delete)
+
+		folders := v1.Group("/folders")
+		folders.POST("/", folderController.Create)
+		folders.PUT("/:id", folderController.Update)
 	}
 
-	err := router.Run(":9001")
+	err := router.Run(fmt.Sprintf(":%s", port))
 	if err != nil {
 		return
 	}
