@@ -93,7 +93,7 @@ func (r *UserRepository) FindAll(filters *filter.Filters) (contracts.PaginateInt
 
 	return &Presenter.PaginatePresenter{
 		Data:        users,
-		Total:       int64(total),
+		Total:       total,
 		CurrentPage: filters.Page,
 		TotalPage:   totalPages,
 		FirstPage:   1,

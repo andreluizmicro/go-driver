@@ -33,14 +33,14 @@ func NewUserController(
 	}
 }
 
-func (us *UserController) Create(c *gin.Context) {
+func (uc *UserController) Create(c *gin.Context) {
 	var input user.CreateInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"msg": err.Error()})
 		return
 	}
 
-	output, err := us.createUser.Execute(input)
+	output, err := uc.createUser.Execute(input)
 	if err != nil {
 		if errors.Is(err, exception.ErrUserAlreadyExists) {
 			c.JSON(http.StatusConflict, gin.H{"message": err.Error()})
@@ -51,10 +51,10 @@ func (us *UserController) Create(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, output)
+	c.JSON(http.StatusCreated, output)
 }
 
-func (us *UserController) FindById(c *gin.Context) {
+func (uc *UserController) FindById(c *gin.Context) {
 	var input user.FindInput
 
 	if err := c.ShouldBindUri(&input); err != nil {
@@ -62,7 +62,7 @@ func (us *UserController) FindById(c *gin.Context) {
 		return
 	}
 
-	output, err := us.findUser.Execute(input)
+	output, err := uc.findUser.Execute(input)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
@@ -71,14 +71,14 @@ func (us *UserController) FindById(c *gin.Context) {
 	c.JSON(http.StatusOK, &output)
 }
 
-func (us *UserController) FindAll(c *gin.Context) {
+func (uc *UserController) FindAll(c *gin.Context) {
 	var input user.ListInput
 	if err := c.ShouldBindQuery(&input); err != nil {
 		c.JSON(http.StatusUnprocessableEntity, gin.H{"msg": err.Error()})
 		return
 	}
 
-	output, err := us.listUser.Execute(input)
+	output, err := uc.listUser.Execute(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -87,7 +87,7 @@ func (us *UserController) FindAll(c *gin.Context) {
 	c.JSON(http.StatusOK, &output)
 }
 
-func (us *UserController) Update(c *gin.Context) {
+func (uc *UserController) Update(c *gin.Context) {
 	var input user.UpdateInput
 
 	if err := c.ShouldBindUri(&input); err != nil {
@@ -100,16 +100,16 @@ func (us *UserController) Update(c *gin.Context) {
 		return
 	}
 
-	output, err := us.updateUser.Execute(input)
+	output, err := uc.updateUser.Execute(input)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, &output)
+	c.JSON(http.StatusNoContent, &output)
 }
 
-func (us *UserController) Delete(c *gin.Context) {
+func (uc *UserController) Delete(c *gin.Context) {
 	var input user.DeleteInput
 
 	if err := c.ShouldBindUri(&input); err != nil {
@@ -117,7 +117,7 @@ func (us *UserController) Delete(c *gin.Context) {
 		return
 	}
 
-	output := us.deleteUser.Execute(input)
+	output := uc.deleteUser.Execute(input)
 	if errors.Is(output.Err, exception.ErrUserNotFound) {
 		c.JSON(http.StatusNotFound, gin.H{"message": output.Err.Error()})
 		return
